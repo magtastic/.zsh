@@ -1,0 +1,8 @@
+.nvm
+.oh-my-zsh
+.poetry
+.zsh_sessions
+.zcompdump*
+.p10k.zsh
+.zsh_history
+pyenv
