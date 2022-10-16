@@ -17,7 +17,6 @@ export CONFIG_PATH="$HOME/.config"
 export LUA_PATH="$CONFIG_PATH/nvim/?.lua;;"
 export DEVELOPER_PATH="$HOME/Developer"
 export SMITTEN_PATH="$DEVELOPER_PATH/Smitten"
-export PYENV_ROOT="$CONFIG_PATH/zsh/pyenv"
 
 if [[ -n $SSH_CONNECTION ]]; then
  export EDITOR='vim'
@@ -33,13 +32,10 @@ export TF_CLI_CONFIG_FILE="$CONFIG_PATH/terraform/.terraformrc"
 #  ~~~~~~
 # * PATH *
 #  ~~~~~~
+export PATH="$PATH:$HOME/.rvm/bin"
 export PATH="$PATH:$HOME/.bin"
-# export PATH="$PATH:$CONFIG_PATH/zsh/.poetry/bin"
-export PATH="$PATH:$PYENV_ROOT/shims"
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-
-
 
 
 #  ~~~~~~~
@@ -53,6 +49,7 @@ alias opid="op item list | fzf | cut -d ' ' -f1"
 alias opitem="opid | xargs op item get"
 alias opdocument="op document list | fzf | cut -d ' ' -f1 | xargs op document get"
 
+
 alias cddesk="cd ~/Desktop"
 alias cddown="cd ~/Downloads"
 alias cdconf="cd $CONFIG_PATH"
@@ -61,6 +58,7 @@ alias cdsmit="cd $SMITTEN_PATH"
 
 alias cpip="ipconfig getifaddr en0 | tr -d '\n' | pbcopy | ipconfig getifaddr en0"
 
+alias smitten_docker_id="docker ps -aqf \"name=^api-api\""
 alias smitten_stoken="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where email = 'magnusol93@gmail.com' limit 1;\" |  rg '\S'"
 alias smitten_uuid="run_sql_query \"select uuid_ from user_account where email = 'magnusol93@gmail.com' order by created_at desc limit 1;\" |  rg '\S' | xargs"
 alias smit_random_token="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where ( email != 'magnusol93@gmail.com' or email is null ) order by RANDOM() limit 1;\" |  rg '\S'"
@@ -145,12 +143,20 @@ fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 # * Plugins *
 #  ~~~~~~~~~
 plugins=(
+  poetry
   git
   macos
   zsh-autosuggestions
   zsh-syntax-highlighting
   zsh-vi-mode
 )
+
+#  ~~~~~~~
+# * PyEnv *
+#  ~~~~~~~
+export PYENV_ROOT="$CONFIG_PATH/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 
 #  ~~~~~~~~~~~~
@@ -171,14 +177,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 export NVM_DIR="$CONFIG_PATH/zsh/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-
-#  ~~~~~~~~~~~~~~~~~~~~~~~~
-# * Python Version Manager *
-#  ~~~~~~~~~~~~~~~~~~~~~~~~
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-
-
 #  ~~~~~~~~
 # * Direnv *
 #  ~~~~~~~~
@@ -195,3 +193,5 @@ eval "$(mcfly init zsh)"
 #  ~~~~~~~~~~~
 source $ZSH/oh-my-zsh.sh
 
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
