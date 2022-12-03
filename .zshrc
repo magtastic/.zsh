@@ -8,36 +8,6 @@ fi
 # I need to suppress the the warning because of prints when starting shell with direnv
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
-
-#  ~~~~~~~~~~~
-# * Variables *
-#  ~~~~~~~~~~~
-export ZSH="$ZDOTDIR/.oh-my-zsh"
-export CONFIG_PATH="$HOME/.config"
-export LUA_PATH="$CONFIG_PATH/nvim/?.lua;;"
-export DEVELOPER_PATH="$HOME/Developer"
-export SMITTEN_PATH="$DEVELOPER_PATH/Smitten"
-
-if [[ -n $SSH_CONNECTION ]]; then
- export EDITOR='vim'
-else
- export EDITOR='nvim'
-fi
-
-export LESSHISTFILE=-
-
-export TF_CLI_CONFIG_FILE="$CONFIG_PATH/terraform/.terraformrc"
-
-
-#  ~~~~~~
-# * PATH *
-#  ~~~~~~
-export PATH="$PATH:$HOME/.rvm/bin"
-export PATH="$PATH:$HOME/.bin"
-export PATH="$PATH:$HOME/.local/bin"
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-
-
 #  ~~~~~~~
 # * Alias *
 #  ~~~~~~~
@@ -48,6 +18,7 @@ alias gico="git branch -r --sort=-committerdate --format='%(refname:short)' | fz
 alias opid="op item list | fzf | cut -d ' ' -f1"
 alias opitem="opid | xargs op item get"
 alias opdocument="op document list | fzf | cut -d ' ' -f1 | xargs op document get"
+alias myPhoneId="xcrun xctrace list devices | grep Magnús | awk 'NF>1{print $NF}' | sed -r 's/^.*\(//' | sed -r 's/\)//'"
 
 
 alias cddesk="cd ~/Desktop"
@@ -59,6 +30,7 @@ alias cdsmit="cd $SMITTEN_PATH"
 alias cpip="ipconfig getifaddr en0 | tr -d '\n' | pbcopy | ipconfig getifaddr en0"
 
 alias smitten_docker_id="docker ps -aqf \"name=^api-api\""
+alias smitten_dd_agent_docker_id="docker ps -aqf \"name=^api-dd_agent\""
 alias smitten_stoken="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where email = 'magnusol93@gmail.com' limit 1;\" |  rg '\S'"
 alias smitten_uuid="run_sql_query \"select uuid_ from user_account where email = 'magnusol93@gmail.com' order by created_at desc limit 1;\" |  rg '\S' | xargs"
 alias smit_random_token="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where ( email != 'magnusol93@gmail.com' or email is null ) order by RANDOM() limit 1;\" |  rg '\S'"
@@ -86,12 +58,17 @@ aws_instanceid() {
    sed 's/"//g'
 }
 
+aws_instanceid_new() {
+   aws ec2 describe-instances |
+   jq '.Reservations | .[].Instances' | fzf
+}
+
 psqlv() {
-  PGPASSWORD=$(op item get c4clor53iptstcbj4gbsixrr6e --fields password) pgcli -U postgres -d smitten
+  PGPASSWORD=smitten pgcli -h localhost -p 2345 -u smitten
 }
 
 run_sql_query() {
-  PGPASSWORD=$(op item get c4clor53iptstcbj4gbsixrr6e --fields password) psql -U postgres -d smitten -t -c $1
+  PGPASSWORD=smitten psql -h localhost -p 2345 -U smitten -t -c $1
 }
 
 copy_smitten_table() {
@@ -193,5 +170,7 @@ eval "$(mcfly init zsh)"
 #  ~~~~~~~~~~~
 source $ZSH/oh-my-zsh.sh
 
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#  ~~~~~~~~~~~~~~~~~~~~~~
+# * Ruby Version Manager*
+#  ~~~~~~~~~~~~~~~~~~~~~~
+source $HOME/.rvm/scripts/rvm
