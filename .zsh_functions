@@ -1,0 +1,35 @@
+smitten(){
+  if [ -z "$1" ]
+  then
+     aws sso login --profile smitten
+     export AWS_PROFILE=smitten
+     $(aws-export-credentials --profile smitten --env-export)
+  else
+     aws sso login --profile smitten-$1
+     export AWS_PROFILE=smitten-$1
+     $(aws-export-credentials --profile smitten-$1 --env-export)
+  fi
+}
+
+aws_instanceid() {
+   aws ec2 describe-instances |
+   jq '.Reservations | .[].Instances | .[].InstanceId' |
+   sed 's/"//g'
+}
+
+aws_instanceid_new() {
+   aws ec2 describe-instances |
+   jq '.Reservations | .[].Instances' | fzf
+}
+
+psqlv() {
+  PGPASSWORD=smitten pgcli -h localhost -p 2345 -u smitten
+}
+
+run_sql_query() {
+  PGPASSWORD=smitten psql -h localhost -p 2345 -U smitten -t -c $1
+}
+
+copy_smitten_table() {
+  run_sql_query "\copy $1 to '$(pwd)/$1.csv' CSV"
+}

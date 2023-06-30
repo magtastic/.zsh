@@ -1,0 +1,28 @@
+#  ~~~~~~~
+# * Alias *
+#  ~~~~~~~
+alias tf="terraform"
+alias tmu="tmux attach || tmux new"
+alias cat="bat"
+alias gico="git branch -r --sort=-committerdate --format='%(refname:short)' | fzf --preview 'git log --graph --color=always --abbrev-commit --decorate --format=format:\"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)\" {}' | sed 's/origin\///' | xargs git checkout"
+alias opid="op item list | fzf | cut -d ' ' -f1"
+alias opitem="opid | xargs op item get"
+alias opdocument="op document list | fzf | cut -d ' ' -f1 | xargs op document get"
+alias my_phone_id="xcrun xctrace list devices | grep Magnús | awk 'NF>1{print $NF}' | sed -r 's/^.*\(//' | sed -r 's/\)//'"
+
+
+alias cddesk="cd ~/Desktop"
+alias cddown="cd ~/Downloads"
+alias cdconf="cd $CONFIG_PATH"
+alias cddev="cd $DEVELOPER_PATH"
+alias cdsmit="cd $SMITTEN_PATH"
+
+alias cpip="ipconfig getifaddr en0 | tr -d '\n' | pbcopy | ipconfig getifaddr en0"
+
+alias smitten_api_docker_id="docker ps -aqf \"name=^api-api-\""
+alias smitten_dd_agent_docker_id="docker ps -aqf \"name=^api-dd_agent\""
+
+alias smitten_stoken="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where email = 'magnusol93@gmail.com' limit 1;\" |  rg '\S'"
+alias smitten_uuid="run_sql_query \"select uuid_ from user_account where email = 'magnusol93@gmail.com' order by created_at desc limit 1;\" |  rg '\S' | xargs"
+alias smit_random_token="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where ( email != 'magnusol93@gmail.com' or email is null ) order by RANDOM() limit 1;\" |  rg '\S'"
+alias smit_random_uuid="run_sql_query \"select uuid_ from user_account where email != 'magnusol93@gmail.com' or email is null order by RANDOM() limit 1;\" |  rg '\S' | xargs"
