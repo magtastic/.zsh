@@ -23,7 +23,7 @@ aws_instanceid_new() {
 }
 
 psqlv() {
-  PGPASSWORD=smitten pgcli -h localhost -p 2345 -u smitten
+  PGPASSWORD=smitten psql -h localhost -p 2345 -U smitten
 }
 
 run_sql_query() {

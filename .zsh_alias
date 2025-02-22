@@ -19,7 +19,7 @@ alias cdsmit="cd $SMITTEN_PATH"
 
 alias cpip="ipconfig getifaddr en0 | tr -d '\n' | pbcopy | ipconfig getifaddr en0"
 
-alias smitten_api_docker_id="docker ps -aqf \"name=^api-api-\""
+alias smitten_api_docker_id="docker ps -qf \"name=^backend-api\""
 alias smitten_dd_agent_docker_id="docker ps -aqf \"name=^api-dd_agent\""
 
 alias smitten_stoken="run_sql_query \"select token from session_token inner join user_account on user_account.id = session_token.user_id where email = 'magnusol93@gmail.com' limit 1;\" |  rg '\S'"

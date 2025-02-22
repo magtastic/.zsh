@@ -29,6 +29,8 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   status
   nvm
   context
+  time
+  date
 )
 
 #  ~~~~
@@ -53,7 +55,8 @@ fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 # * Plugins *
 #  ~~~~~~~~~
 plugins=(
-  poetry
+  fzf-tab
+  nvm
   git
   macos
   zsh-autosuggestions
@@ -85,7 +88,6 @@ export NVM_DIR="$CONFIG_PATH/zsh/.nvm"
 #  ~~~~~~~~
 eval "$(direnv hook zsh)"
 
-
 #  ~~~~~~~
 # * McFly *
 #  ~~~~~~~
@@ -98,3 +100,28 @@ source $ZSH/oh-my-zsh.sh
 
 # Hate this. I need to find a better way to do this
 export PATH="$PATH:$(python3.11 -m site --user-base)/bin"
+
+# flashlight
+export PATH="/Users/magtastic/.flashlight/bin:$PATH"
+export PATH=$PATH:$HOME/.maestro/bin
+
+# bun completions
+[ -s "/Users/magtastic/.bun/_bun" ] && source "/Users/magtastic/.bun/_bun"
+
+
+# Bun stuff
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/magtastic/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# PyEnv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
