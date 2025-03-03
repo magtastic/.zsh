@@ -3,11 +3,11 @@ smitten(){
   then
      aws sso login --profile smitten
      export AWS_PROFILE=smitten
-     $(aws-export-credentials --profile smitten --env-export)
+     $(aws configure export-credentials --profile smitten --format env)
   else
      aws sso login --profile smitten-$1
      export AWS_PROFILE=smitten-$1
-     $(aws-export-credentials --profile smitten-$1 --env-export)
+     $(aws configure export-credentials --profile smitten-$1 --format env)
   fi
 }
 
