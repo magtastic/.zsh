@@ -24,6 +24,7 @@ POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
   newline 
 )
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  python
   aws 
   command_execution_time
   status
@@ -121,7 +122,8 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# PyEnv
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+
+
+# Auto source uv when changing directories
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd auto_uvsync

@@ -1,4 +1,4 @@
-smitten(){
+function smitten(){
   if [ -z "$1" ]
   then
      aws sso login --profile smitten
@@ -11,25 +11,42 @@ smitten(){
   fi
 }
 
-aws_instanceid() {
-   aws ec2 describe-instances |
-   jq '.Reservations | .[].Instances | .[].InstanceId' |
-   sed 's/"//g'
-}
-
-aws_instanceid_new() {
-   aws ec2 describe-instances |
-   jq '.Reservations | .[].Instances' | fzf
-}
-
-psqlv() {
+function psqlv() {
   PGPASSWORD=smitten psql -h localhost -p 2345 -U smitten
 }
 
-run_sql_query() {
+function run_sql_query() {
   PGPASSWORD=smitten psql -h localhost -p 2345 -U smitten -t -c $1
 }
 
-copy_smitten_table() {
+function copy_smitten_table() {
   run_sql_query "\copy $1 to '$(pwd)/$1.csv' CSV"
+}
+
+
+function uvsync() {
+  # Run uv sync
+  uv sync || return 1
+
+  # Find the venv python path
+  venv_python=$(uv python find | head -n 1)
+
+  # Derive the activate path by replacing "bin/python3" with "bin/activate"
+  venv_activate="${venv_python%python3}activate"
+
+  # Source the activate script if it exists
+  if [[ -f "$venv_activate" ]]; then
+    source "$venv_activate"
+    echo "Activated venv at: $venv_activate"
+  else
+    echo "Could not find activate script at: $venv_activate"
+    return 1
+  fi
+}
+
+# Hook that runs every time you change directory
+function auto_uvsync() {
+  if [[ -f "uv.lock" ]]; then
+    uvsync
+  fi
 }
