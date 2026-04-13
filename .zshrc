@@ -1,12 +1,14 @@
 #  ~~~~~~~~~~~~~~~~
 # * Instant Prompt *
 #  ~~~~~~~~~~~~~~~~
+# Suppress the instant-prompt warning caused by prints during shell init
+# (direnv, autoupdate plugin's git autostash, etc.). Must be set BEFORE
+# sourcing the instant-prompt cache, or it only takes effect next shell.
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
-# I need to suppress the the warning because of prints when starting shell with direnv
-typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
 source $CONFIG_PATH/zsh/.zsh_alias
 source $CONFIG_PATH/zsh/.zsh_functions
@@ -127,3 +129,9 @@ esac
 # Auto source uv when changing directories
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd auto_uvsync
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/completion.zsh.inc'; fi

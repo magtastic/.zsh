@@ -22,6 +22,9 @@ export CONFIG_PATH="$HOME/.config"
 export DEVELOPER_PATH="$HOME/Developer"
 export SMITTEN_PATH="$DEVELOPER_PATH/Smitten/smitten"
 
+# Claude Code
+export CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS=true
+
 #  Package specific variables
 export ZSH="$ZDOTDIR/.oh-my-zsh"
 export LUA_PATH="$CONFIG_PATH/nvim/?.lua;;"
@@ -40,4 +43,3 @@ else
 fi
 
 source "$CARGO_HOME/env"
-

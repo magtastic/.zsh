@@ -50,3 +50,7 @@ function auto_uvsync() {
     uvsync
   fi
 }
+
+function claude() {
+  command claude --dangerously-skip-permissions "$@"
+}
