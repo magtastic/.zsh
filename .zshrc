@@ -1,137 +1,63 @@
-#  ~~~~~~~~~~~~~~~~
-# * Instant Prompt *
-#  ~~~~~~~~~~~~~~~~
-# Suppress the instant-prompt warning caused by prints during shell init
-# (direnv, autoupdate plugin's git autostash, etc.). Must be set BEFORE
-# sourcing the instant-prompt cache, or it only takes effect next shell.
+# ────────────────────────────────────────────────────────────────────────────
+# Powerlevel10k instant prompt — must run before any output-producing init.
+# ────────────────────────────────────────────────────────────────────────────
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-source $CONFIG_PATH/zsh/.zsh_alias
-source $CONFIG_PATH/zsh/.zsh_functions
+# ────────────────────────────────────────────────────────────────────────────
+# Plugins — antidote loads everything in .zsh_plugins.txt
+# ────────────────────────────────────────────────────────────────────────────
+source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+antidote load
 
-#  ~~~~
-# * UI *
-#  ~~~~
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# ────────────────────────────────────────────────────────────────────────────
+# Prompt — Powerlevel10k (brew install). Run `p10k configure` to (re)generate
+# .p10k.zsh.  The element lists below override anything in .p10k.zsh.
+# ────────────────────────────────────────────────────────────────────────────
+source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+[[ -r $ZDOTDIR/.p10k.zsh ]] && source $ZDOTDIR/.p10k.zsh
 
-# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
-[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-  dir 
-  vcs 
-  newline 
-)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   python
-  aws 
+  aws
   command_execution_time
   status
-  nvm
   context
   time
-  date
 )
 
-#  ~~~~
-# * UX *
-#  ~~~~
-fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+# ────────────────────────────────────────────────────────────────────────────
+# Runtimes & shell hooks
+# ────────────────────────────────────────────────────────────────────────────
+# mise — node/python/java/ruby/etc. version manager (replaces nvm)
+eval "$(/opt/homebrew/bin/mise activate zsh)"
 
-# TODO FIX:  chpwd:1: bad floating point constant
-# AUTOMATICALLY_SOURCED_FILES=(".awsrc" ".bash_functions" ".customrc")
-#
-# function chpwd {
-#   for i in "${AUTOMATICALLY_SOURCED_FILES[@]}"
-#   do
-#     if test -f "$(pwd)/$i"; then
-#       source $(pwd)/$i
-#       echo "[Sourced ⚡️] Found $i in directory."
-#     fi
-#   done
-# }
-
-#  ~~~~~~~~~
-# * Plugins *
-#  ~~~~~~~~~
-plugins=(
-  fzf-tab
-  nvm
-  git
-  macos
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  zsh-vi-mode
-  autoupdate
-)
-
-#  ~~~~~~~~~~~~
-# * 1 Password *
-#  ~~~~~~~~~~~~
-# eval "$(op completion zsh)"; compdef _op op
-
-
-#  ~~~~~~~~~~~
-# * Home Brew *
-#  ~~~~~~~~~~~
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-
-#  ~~~~~~~~~~~~~~~~~~~~~~
-# * Node Version Manager *
-#  ~~~~~~~~~~~~~~~~~~~~~~
-export NVM_DIR="$CONFIG_PATH/zsh/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-#  ~~~~~~~~
-# * Direnv *
-#  ~~~~~~~~
+# direnv — per-directory env files
 eval "$(direnv hook zsh)"
 
-#  ~~~~~~~
-# * McFly *
-#  ~~~~~~~
-eval "$(mcfly init zsh)"
+# fzf shell integration (Ctrl-T file picker, Alt-C cd) and atuin (Ctrl-R history).
+# --disable-up-arrow keeps Up = zsh's standard previous-command-recall (editable
+# inline). Atuin's full TUI search stays on Ctrl-R.
+# Re-init inside zsh-vi-mode hook so its keybindings don't get clobbered.
+zvm_after_init_commands+=(
+  'source <(fzf --zsh)'
+  'eval "$(atuin init zsh --disable-up-arrow)"'
+)
 
-#  ~~~~~~~~~~~
-# * Oh My Zsh *
-#  ~~~~~~~~~~~
-source $ZSH/oh-my-zsh.sh
+# ────────────────────────────────────────────────────────────────────────────
+# Personal config
+# ────────────────────────────────────────────────────────────────────────────
+[[ -r $ZDOTDIR/aliases.zsh   ]] && source $ZDOTDIR/aliases.zsh
+[[ -r $ZDOTDIR/functions.zsh ]] && source $ZDOTDIR/functions.zsh
+[[ -r $ZDOTDIR/smitten.zsh   ]] && source $ZDOTDIR/smitten.zsh
 
-# Hate this. I need to find a better way to do this
-export PATH="$PATH:$(python3.11 -m site --user-base)/bin"
+# Bun completions
+[[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
 
-# flashlight
-export PATH="/Users/magtastic/.flashlight/bin:$PATH"
-export PATH=$PATH:$HOME/.maestro/bin
+# Local-only overrides (untracked, machine-specific)
+[[ -r $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
 
-# bun completions
-[ -s "/Users/magtastic/.bun/_bun" ] && source "/Users/magtastic/.bun/_bun"
-
-
-# Bun stuff
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# pnpm
-export PNPM_HOME="/Users/magtastic/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-
-
-# Auto source uv when changing directories
-autoload -Uz add-zsh-hook
-add-zsh-hook chpwd auto_uvsync
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/magtastic/Developer/Smitten/smitten/google-cloud-sdk/completion.zsh.inc'; fi
+. "$HOME/.local/share/../bin/env"

@@ -1,0 +1,25 @@
+# Plugin manifest read by antidote. File order = load order.
+
+# OMZ compatibility shim — runs compinit, sets ZSH/ZSH_CACHE_DIR, sources OMZ
+# libs.  Required by any OMZ plugin that calls compdef during load.
+getantidote/use-omz
+
+# Oh-My-Zsh plugins
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/macos
+
+# Tab completion through fzf
+Aloxaf/fzf-tab
+
+# Extra completions
+zsh-users/zsh-completions
+
+# Inline ghost-text suggestions from history
+zsh-users/zsh-autosuggestions
+
+# Vim modal editing on the command line
+jeffreytse/zsh-vi-mode
+
+# Syntax highlighting — green = valid command, red = unknown.
+# MUST be loaded last (or near-last) of any plugin that defines widgets.
+zsh-users/zsh-syntax-highlighting

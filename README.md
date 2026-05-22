@@ -1,3 +1,0 @@
-# .zsh
-
-Zsh config files
